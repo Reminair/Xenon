@@ -1,4 +1,4 @@
-use termion::*;
+use console::*;
 use std::{
     env,
     fs,
