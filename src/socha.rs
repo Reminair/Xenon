@@ -1,16 +1,18 @@
-use std::env;
-use std::fs;
-use std::path::Path;
-use std::io;
-use std::path::PathBuf;
-use crossterm::terminal;
-use crossterm::cursor;
-use crossterm::event;
-use crossterm::event::KeyCode;
-use crate::cli;
-use crate::cli::run_cli;
-use crossterm::terminal::ClearType;
-use crossterm::Command;
+use termion::*;
+use std::{
+    env,
+    fs,
+    io,
+    path::{
+        Path,
+        PathBuf
+    }
+};
+use crossterm::{terminal, terminal::ClearType, Command, cursor, event, event::KeyCode};
+use crate::{
+    cli,
+    cli::run_cli
+};
 
 // File manager function
 pub fn run_file_manager() -> io::Result<()> {
@@ -18,8 +20,7 @@ pub fn run_file_manager() -> io::Result<()> {
 
     loop {
         // Clear the terminal
-        terminal::Clear(ClearType::All).execute_winapi()?;
-        cursor::MoveTo(0, 0).execute_winapi()?;
+        cli::clear_screen();
 
         // Show the current directory
         println!("Current Directory: {}", current_dir.display());
