@@ -1,4 +1,4 @@
-# xenonOS
+# xenon
 Welcome to the Official xenon github!
 
 ## What is xenon?
