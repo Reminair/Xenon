@@ -3,6 +3,7 @@ use std::process::Command;
 use sysinfo::System;
 use raw_cpuid::CpuId;
 use colored::*;
+use termion::*;
 use crossterm::{
     ExecutableCommand,
     terminal::{self, ClearType},
@@ -12,12 +13,19 @@ use crossterm::{
 use crate::socha;
 use crate::socha::run_file_manager;
 
+pub fn clear_screen() {
+    print!("{}{}",
+           termion::clear::All, // Clear screen
+           termion::cursor::Goto(1,1) // Go to top left most position
+    );
+}
+
 pub fn run_cli() -> Result<(), std::io::Error> {
     let mut sys = System::new();
     sys.refresh_all();
     // Display a prompt for the user
     loop {
-        print!("{}", "xenonOS".purple().bold());
+        print!("{}", "Xenon".purple().bold());
         print!("{}", ">".white());
         io::stdout().flush().unwrap();
 
@@ -72,20 +80,13 @@ pub fn run_cli() -> Result<(), std::io::Error> {
                 println!("{}", "XXXXXXX       XXXXXXX          OOOOOOOOO      SSSSSSSSSSSSSSS   ".bold().purple());
                 println!(" ");
                 println!(" ");
-                println!("{}", "xenonOS - Bought to yo by the Xenon OS Group".purple());
+                println!("{}", "Xenon - Bought to you by the Xenon Group".purple());
                 println!("{}", "Built by Orion in his bedroom on 06/01/24".purple());
-                println!("{}", "Credit for the name 'XenonOS' goes to 'reminair', Thank you ^-^".purple());
-                println!("{}", "Thank you to everyone using xenonOS without people using it, xenonOS wouldn't exsist!".purple().bold());
+                println!("{}", "Credit for the name 'Xenon' goes to 'Reminair', Thank you ^-^".purple());
+                println!("{}", "Thank you to everyone using Xenon without people using it, Xenon wouldn't exist!".purple().bold());
             }
             _ => {
                 println!("Command not recognized. Type 'help' for a list of commands.");
-            }
-        }
-        fn clear_screen() {
-            if cfg!(target_os = "windows") {
-                Command::new("cmd").arg("/c").arg("cls").status().unwrap();
-            } else {
-                Command::new("clear").status().unwrap();
             }
         }
         fn show_sfetch(sys: &mut System) {
