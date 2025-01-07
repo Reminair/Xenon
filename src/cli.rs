@@ -3,7 +3,7 @@ use std::process::Command;
 use sysinfo::System;
 use raw_cpuid::CpuId;
 use colored::*;
-use termion::*;
+use console::*;
 use crossterm::{
     ExecutableCommand,
     terminal::{self, ClearType},
@@ -14,10 +14,8 @@ use crate::socha;
 use crate::socha::run_file_manager;
 
 pub fn clear_screen() {
-    print!("{}{}",
-           termion::clear::All, // Clear screen
-           termion::cursor::Goto(1,1) // Go to top left most position
-    );
+    let term = Term::stdout();
+    term.clear_screen().unwrap();
 }
 
 pub fn run_cli() -> Result<(), std::io::Error> {
