@@ -8,7 +8,10 @@ use std::{
         PathBuf
     }
 };
-use crossterm::{terminal, terminal::ClearType, Command, cursor, event, event::KeyCode};
+use crossterm::{
+    event,
+    event::KeyCode
+};
 use crate::{
     cli,
     cli::run_cli
