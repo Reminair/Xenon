@@ -9,23 +9,23 @@ xenon Is what is described as a "placeboOS", it's a program that tries to act, b
 
 ## What are the features?
 
-Well its a pretty small list right now, but as me and my team learn rust, it will get more extensive as we go.
+Well it's a pretty small list right now, but as me and my team learn rust, it will get more extensive as we go.
 
 ### Fakeboot:
 
-Its not very good looking for now, but fakeboot basically just makes it feel like your bootinmg into an OS
+Its not very good looking for now, but fakeboot basically just makes it feel like your booting into an OS
 
 ![image](https://github.com/user-attachments/assets/173b7f99-a24c-4593-99c1-fef85564d318)
 
 ### xenoncli
 
-Its just our cli, there is nothing special to it, other than its ours of course. 
+Its just our cli, there is nothing special to it, other than it's ours of course. 
 
 ![image](https://github.com/user-attachments/assets/692a1c4a-6c49-4500-a1a3-0a50b99188d3)
 
 ### Socha
 
-Sochoa is xenon's file manager, it does file manager stuff
+Socha is xenon's file manager, it does file manager stuff
 
 ![image](https://github.com/user-attachments/assets/1fb16bbb-9b0a-4ef9-9f9a-68571c981813)
 
