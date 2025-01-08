@@ -116,7 +116,6 @@ pub fn run_cli() -> Result<(), std::io::Error> {
                 println!("{}", "Xenon - Bought to you by the Xenon Group".purple());
                 println!("{}", "Built by Orion in his bedroom on 06/01/24".purple());
                 println!("{}", "Credit for the name 'Xenon' goes to 'Reminair', Thank you ^-^".purple());
-                println!("{}", "Credit to the IEEE for creating the POSIX standard.".purple());
                 println!("{}", "Thank you to everyone using Xenon without people using it, Xenon wouldn't exist!".purple().bold());
             }
             _ => {
@@ -124,7 +123,7 @@ pub fn run_cli() -> Result<(), std::io::Error> {
             }
         }
         fn show_sfetch(sys: &mut System) {
-            let os_name = "xenonOS 1.0";
+            let os_name = "Xenon 1.1";
             let uptime = System::uptime();
             let cpuid = CpuId::new();
 
