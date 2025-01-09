@@ -1,15 +1,11 @@
-use std::io::{self, Write};  // For reading user input and printing output
-use std::process::Command;
+use std::io::{  // For reading user input and printing output
+    self,
+    Write
+};
 use sysinfo::System;
 use raw_cpuid::CpuId;
 use colored::*;
 use console::*;
-use crossterm::{
-    ExecutableCommand,
-    terminal::{self, ClearType},
-    cursor,
-    event::{self, KeyCode},
-};
 use crate::socha;
 use crate::socha::run_file_manager;
 
@@ -34,23 +30,62 @@ pub fn run_cli() -> Result<(), std::io::Error> {
         // Remove the newline character from the input
         let input = input.trim();
 
+        let mut input_pieces = input.split_whitespace();
+
+        let command = input_pieces.next().unwrap_or("");
+
         // Execute the command
-        match input {
+        match command {
             "help" => {
-                println!("Available commands:");
-                println!("help      - Show this help message");
-                println!("shutdwn   - Shutdown xenonOS");
-                println!("clr       - Clear the screen");
-                println!("sfetch    - Show xenonOS system info");
-                println!("socha     - The xenonOS file manager");
-                println!("credits   - Credits to the people who made XenonOS Possible");
+                println!("Available commands:\n");
+                println!("{}: {}",
+                    format!("{: >11}",
+                    "help"),
+                    "Show this help message"
+                );
+                println!("{}: {}",
+                    format!("{: >11}",
+                    "shutdwn"),
+                    "Shutdown Xenon"
+                );
+                println!("{}: {}",
+                    format!("{: >11}",
+                    "clr"),
+                    "Clear the screen"
+                );
+                println!("{}: {}",
+                    format!("{: >11}",
+                    "say"),
+                    "Repeats a message exactly"
+                );
+                println!("{}: {}",
+                    format!("{: >11}",
+                    "sfetch"),
+                    "Show Xenon system info"
+                );
+                println!("{}: {}",
+                    format!("{: >11}",
+                    "socha"),
+                    "The Xenon file manager"
+                );
+                println!("{}: {}",
+                    format!("{: >11}",
+                    "credits"),
+                    "Credits to the people who made Xenon Possible"
+                );
             }
             "shutdwn" => {
                 println!("Goodbye!...");
-                break Ok(());
+                std::process::exit(0);
             }
             "clr" => {
                 clear_screen();
+            }
+            "say" => {
+                let text = input_pieces.collect::<Vec<&str>>().join(" ");
+
+                println!("{}", text);
+                io::stdout().flush().unwrap();
             }
             "sfetch" => {
                 sys.refresh_cpu(); // Ensure CPU info is updated before displaying
@@ -88,7 +123,7 @@ pub fn run_cli() -> Result<(), std::io::Error> {
             }
         }
         fn show_sfetch(sys: &mut System) {
-            let os_name = "xenonOS 1.0";
+            let os_name = "Xenon 1.1";
             let uptime = System::uptime();
             let cpuid = CpuId::new();
 
@@ -99,14 +134,39 @@ pub fn run_cli() -> Result<(), std::io::Error> {
             let cpu_brand = cpuid.get_processor_brand_string()
                 .map_or("Unknown CPU".to_string(), |brand| brand.as_str().to_string());
 
-            let total_ram = sys.total_memory() / 1024 / 1024; // Convert to MB
+            let total_ram = sys.total_memory() / u64::pow(1024, 2); // Convert to MB
         
-            println!("{}", "xenonOS System Info".bold().purple());
-            println!("{}    {}", "OS:".bold().yellow(), os_name);
-            println!("{}    {} seconds", "Uptime:".bold().yellow(), uptime);
-            println!("{}    {}", "CPU Vendor:".bold().yellow(), vendor_info);
-            println!("{}    {}", "CPU Brand:".bold().yellow(), cpu_brand);
-            println!("{}    {} MB", "RAM:".bold().yellow(), total_ram);
+            // Info header
+            println!("{}", style("Xenon System Info").bold().magenta());
+
+            // Info body
+            let ylbld = console::Style::new().bold().yellow(); // Yellow bold style
+
+            println!("{}: {}",
+                format!("{: >11}",      // Pad "OS:" with spaces from the left to 11 characters
+                ylbld.apply_to("OS")),  // Apply style
+                os_name
+            );
+            println!("{}: {} seconds",
+                format!("{: >11}",
+                ylbld.apply_to("Uptime")),
+                uptime
+            );
+            println!("{}: {}",
+                format!("{: >11}",
+                ylbld.apply_to("CPU Vendor")),
+                vendor_info
+            );
+            println!("{}: {}",
+                format!("{: >11}",
+                ylbld.apply_to("CPU Brand")),
+                cpu_brand
+            );
+            println!("{}: {} MB",
+                format!("{: >11}",
+                ylbld.apply_to("RAM")),
+                total_ram
+            );
         }
     }
 }
