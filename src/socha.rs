@@ -1,21 +1,14 @@
-use console::*;
 use std::{
     env,
     fs,
     io,
-    path::{
-        Path,
-        PathBuf
-    }
+    path::PathBuf
 };
 use crossterm::{
     event,
     event::KeyCode
 };
-use crate::{
-    cli,
-    cli::run_cli
-};
+use crate::cli;
 
 // File manager function
 pub fn run_file_manager() -> io::Result<()> {
@@ -33,7 +26,6 @@ pub fn run_file_manager() -> io::Result<()> {
         let entries: Vec<_> = fs::read_dir(&current_dir)?.collect::<Result<Vec<_>, _>>()?;
         let mut dirs: Vec<String> = Vec::new();
         let mut files: Vec<String> = Vec::new();
-        let mut index = 1;
 
         for entry in &entries {
             let entry_name = entry.file_name().to_string_lossy().to_string();
