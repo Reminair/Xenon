@@ -1,13 +1,14 @@
-use std::io::{  // For reading user input and printing output
+use sysinfo::System;
+use raw_cpuid::CpuId;
+use std::io::{
     self,
     Write
 };
-use sysinfo::System;
-use raw_cpuid::CpuId;
-use colored::*;
-use console::*;
+use console::{
+    Term,
+    style
+};
 use crate::socha;
-use crate::socha::run_file_manager;
 
 pub fn clear_screen() {
     let term = Term::stdout();
@@ -15,12 +16,14 @@ pub fn clear_screen() {
 }
 
 pub fn run_cli() -> Result<(), std::io::Error> {
+    let prbld = console::Style::new().bold().magenta(); // Purple bold style
+    let pr = console::Style::new().magenta();           // Purple style
+
     let mut sys = System::new();
     sys.refresh_all();
-    // Display a prompt for the user
+
     loop {
-        print!("{}", "Xenon".purple().bold());
-        print!("{}", ">".white());
+        print!("{}{}", prbld.apply_to("Xenon"), ">");   // Display a prompt for the user
         io::stdout().flush().unwrap();
 
         // Read the user's input
@@ -95,28 +98,33 @@ pub fn run_cli() -> Result<(), std::io::Error> {
                 let _ = socha::run_file_manager();
             }
             "credits" => {
-                println!("{}", "XXXXXXX       XXXXXXX          OOOOOOOOO        SSSSSSSSSSSSSSS ".bold().purple());
-                println!("{}", "X:::::X       X:::::X        OO:::::::::OO    SS:::::::::::::::S".bold().purple());
-                println!("{}", "X:::::X       X:::::X      OO:::::::::::::OO S:::::SSSSSS::::::S".bold().purple());
-                println!("{}", "X::::::X     X::::::X     O:::::::OOO:::::::OS:::::S     SSSSSSS".bold().purple());
-                println!("{}", "XXX:::::X   X:::::XXX     O::::::O   O::::::OS:::::S            ".bold().purple());
-                println!("{}", "   X:::::X X:::::X        O:::::O     O:::::OS:::::S            ".bold().purple());
-                println!("{}", "    X:::::X:::::X         O:::::O     O:::::O S::::SSSS         ".bold().purple());
-                println!("{}", "     X:::::::::X          O:::::O     O:::::O  SS::::::SSSSS    ".bold().purple());
-                println!("{}", "     X:::::::::X          O:::::O     O:::::O    SSS::::::::SS  ".bold().purple());
-                println!("{}", "    X:::::X:::::X         O:::::O     O:::::O       SSSSSS::::S ".bold().purple());
-                println!("{}", "   X:::::X X:::::X        O:::::O     O:::::O            S:::::S".bold().purple());
-                println!("{}", "XXX:::::X   X:::::XXX     O::::::O   O::::::O            S:::::S".bold().purple());
-                println!("{}", "X::::::X     X::::::X     O:::::::OOO:::::::OSSSSSSS     S:::::S".bold().purple());
-                println!("{}", "X:::::X       X:::::X      OO:::::::::::::OO S::::::SSSSSS:::::S".bold().purple());
-                println!("{}", "X:::::X       X:::::X        OO:::::::::OO   S:::::::::::::::SS ".bold().purple());
-                println!("{}", "XXXXXXX       XXXXXXX          OOOOOOOOO      SSSSSSSSSSSSSSS   ".bold().purple());
-                println!(" ");
-                println!(" ");
-                println!("{}", "Xenon - Bought to you by the Xenon Group".purple());
-                println!("{}", "Built by Orion in his bedroom on 06/01/24".purple());
-                println!("{}", "Credit for the name 'Xenon' goes to 'Reminair', Thank you ^-^".purple());
-                println!("{}", "Thank you to everyone using Xenon without people using it, Xenon wouldn't exist!".purple().bold());
+                println!("{}", prbld.apply_to("                  ooo OOO OOO ooo"));
+                println!("{}", prbld.apply_to("              oOO                 OOo"));
+                println!("{}", prbld.apply_to("          oOO                         OOo"));
+                println!("{}", prbld.apply_to("       oOO                               OOo"));
+                println!("{}", prbld.apply_to("     oOO      dMb                   dMP    OOo"));
+                println!("{}", prbld.apply_to("   oOO     dMP   YMb              dMP        OOo"));
+                println!("{}", prbld.apply_to("  oOO              YMb          dMP           OOo"));
+                println!("{}", prbld.apply_to(" oOO                YMb       dMP              OOo"));
+                println!("{}", prbld.apply_to("oOO                  YMb    dMP                 OOo"));
+                println!("{}", prbld.apply_to("oOO                   YMb dMP                   OOo"));
+                println!("{}", prbld.apply_to("oOO                     dMP                     OOo"));
+                println!("{}", prbld.apply_to("oOO                   dMP YMb                   OOo"));
+                println!("{}", prbld.apply_to("oOO                 dMP    YMb                  OOo"));
+                println!("{}", prbld.apply_to(" oOO              dMP       YMb                OOo"));
+                println!("{}", prbld.apply_to("  oOO           dMP          YMb              OOo"));
+                println!("{}", prbld.apply_to("   oOO        dMP              YMb   dMP     OOo"));
+                println!("{}", prbld.apply_to("     oOO    dMP                   YMP      OOo"));
+                println!("{}", prbld.apply_to("       oO                                OOo"));
+                println!("{}", prbld.apply_to("          oOO                         OOo"));
+                println!("{}", prbld.apply_to("              oOO                 OOo"));
+                println!("{}", prbld.apply_to("                  ooo OOO OOO ooo"));
+                println!("");
+                println!("");
+                println!("{}", pr.apply_to("Xenon - Bought to you by the Xenon Group"));
+                println!("{}", pr.apply_to("Built by Orion in his bedroom on 06/01/24"));
+                println!("{}", pr.apply_to("Credit for the name 'Xenon' goes to 'Reminair', Thank you ^-^"));
+                println!("{}", prbld.apply_to("Thank you to everyone using Xenon without people using it, Xenon wouldn't exist!"));
             }
             _ => {
                 println!("Command not recognized. Type 'help' for a list of commands.");
@@ -140,7 +148,7 @@ pub fn run_cli() -> Result<(), std::io::Error> {
             println!("{}", style("Xenon System Info").bold().magenta());
 
             // Info body
-            let ylbld = console::Style::new().bold().yellow(); // Yellow bold style
+            let ylbld = console::Style::new().bold().yellow();  // Yellow bold style
 
             println!("{}: {}",
                 format!("{: >11}",      // Pad "OS:" with spaces from the left to 11 characters
