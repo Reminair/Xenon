@@ -11,12 +11,12 @@ use crossterm::{
 use crate::cli;
 
 // File manager function
-pub fn run_file_manager() -> io::Result<()> {
+pub fn run() -> io::Result<()> {
     let mut current_dir = env::current_dir()?;
 
     loop {
         // Clear the terminal
-        cli::clear_screen();
+        cli::clear();
 
         // Show the current directory
         println!("Current Directory: {}", current_dir.display());
