@@ -1,29 +1,50 @@
 use sysinfo::System;
 use raw_cpuid::CpuId;
-use std::io::{
-    self,
-    Write
+use std::{
+    fs::File,
+    path::Path,
+    io::{
+        stdout,
+        self,
+        Write,
+        BufRead
+    }
 };
-use console::{
-    Term,
-    style
+use crossterm::{
+    ExecutableCommand,
+    cursor::{
+        MoveToColumn,
+        MoveToRow
+    },
+    terminal::{
+        Clear,
+        ClearType
+    }
 };
+use colored::Colorize;
+use crate::boot::OS_NAME;
 use crate::socha;
 
-pub fn clear_screen() {
-    let term = Term::stdout();
-    term.clear_screen().unwrap();
+pub fn clear() {
+    let mut stdout = stdout();
+    let _ = stdout.execute(MoveToColumn(0));            // Move to left-most column
+    let _ = stdout.execute(MoveToRow(0));               // Move to top-most row
+    let _ = stdout.execute(Clear(ClearType::All));      // Clear screen
+    let _ = stdout.execute(Clear(ClearType::Purge));    // Clear history
 }
 
-pub fn run_cli() -> Result<(), std::io::Error> {
-    let prbld = console::Style::new().bold().magenta(); // Purple bold style
-    let pr = console::Style::new().magenta();           // Purple style
+fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+where P: AsRef<Path>, {
+    let file = File::open(filename)?;
+    Ok(io::BufReader::new(file).lines())
+}
 
+pub fn run_cli() {
     let mut sys = System::new();
     sys.refresh_all();
 
     loop {
-        print!("{}{}", prbld.apply_to("Xenon"), ">");   // Display a prompt for the user
+        print!("{}{}", "Xenon".bold().purple(), ">");   // Display a prompt for the user
         io::stdout().flush().unwrap();
 
         // Read the user's input
@@ -40,49 +61,19 @@ pub fn run_cli() -> Result<(), std::io::Error> {
         // Execute the command
         match command {
             "help" => {
-                println!("Available commands:\n");
-                println!("{}: {}",
-                    format!("{: >11}",
-                    "help"),
-                    "Show this help message"
-                );
-                println!("{}: {}",
-                    format!("{: >11}",
-                    "shutdwn"),
-                    "Shutdown Xenon"
-                );
-                println!("{}: {}",
-                    format!("{: >11}",
-                    "clr"),
-                    "Clear the screen"
-                );
-                println!("{}: {}",
-                    format!("{: >11}",
-                    "say"),
-                    "Repeats a message exactly"
-                );
-                println!("{}: {}",
-                    format!("{: >11}",
-                    "sfetch"),
-                    "Show Xenon system info"
-                );
-                println!("{}: {}",
-                    format!("{: >11}",
-                    "socha"),
-                    "The Xenon file manager"
-                );
-                println!("{}: {}",
-                    format!("{: >11}",
-                    "credits"),
-                    "Credits to the people who made Xenon Possible"
-                );
+                if let Ok(lines) = read_lines("./help.txt") {
+                    // Consumes the iterator, returns an (Optional) String
+                    for line in lines.map_while(Result::ok) {
+                        println!("{}", line);
+                    }
+                }
             }
             "shutdwn" => {
                 println!("Goodbye!...");
                 std::process::exit(0);
             }
             "clr" => {
-                clear_screen();
+                clear();
             }
             "say" => {
                 let text = input_pieces.collect::<Vec<&str>>().join(" ");
@@ -95,43 +86,21 @@ pub fn run_cli() -> Result<(), std::io::Error> {
                 show_sfetch(&mut sys);
             }
             "socha" => {
-                let _ = socha::run_file_manager();
+                let _ = socha::run();
             }
             "credits" => {
-                println!("{}", prbld.apply_to("                  ooo OOO OOO ooo"));
-                println!("{}", prbld.apply_to("              oOO                 OOo"));
-                println!("{}", prbld.apply_to("          oOO                         OOo"));
-                println!("{}", prbld.apply_to("       oOO                               OOo"));
-                println!("{}", prbld.apply_to("     oOO      dMb                   dMP    OOo"));
-                println!("{}", prbld.apply_to("   oOO     dMP   YMb              dMP        OOo"));
-                println!("{}", prbld.apply_to("  oOO              YMb          dMP           OOo"));
-                println!("{}", prbld.apply_to(" oOO                YMb       dMP              OOo"));
-                println!("{}", prbld.apply_to("oOO                  YMb    dMP                 OOo"));
-                println!("{}", prbld.apply_to("oOO                   YMb dMP                   OOo"));
-                println!("{}", prbld.apply_to("oOO                     dMP                     OOo"));
-                println!("{}", prbld.apply_to("oOO                   dMP YMb                   OOo"));
-                println!("{}", prbld.apply_to("oOO                 dMP    YMb                  OOo"));
-                println!("{}", prbld.apply_to(" oOO              dMP       YMb                OOo"));
-                println!("{}", prbld.apply_to("  oOO           dMP          YMb              OOo"));
-                println!("{}", prbld.apply_to("   oOO        dMP              YMb   dMP     OOo"));
-                println!("{}", prbld.apply_to("     oOO    dMP                   YMP      OOo"));
-                println!("{}", prbld.apply_to("       oO                                OOo"));
-                println!("{}", prbld.apply_to("          oOO                         OOo"));
-                println!("{}", prbld.apply_to("              oOO                 OOo"));
-                println!("{}", prbld.apply_to("                  ooo OOO OOO ooo"));
-                println!("");
-                println!("");
-                println!("{}", pr.apply_to("Xenon - Bought to you by the Xenon Group"));
-                println!("{}", pr.apply_to("Built by Orion in his bedroom on 06/01/24"));
-                println!("{}", pr.apply_to("Credit for the name 'Xenon' goes to 'Reminair', Thank you ^-^"));
-                println!("{}", prbld.apply_to("Thank you to everyone using Xenon without people using it, Xenon wouldn't exist!"));
+                if let Ok(lines) = read_lines("./credits.txt") {
+                    // Consumes the iterator, returns an (Optional) String
+                    for line in lines.map_while(Result::ok) {
+                        println!("{}", line.bold().purple());
+                    }
+                }
             }
             _ => {
                 println!("Command not recognized. Type 'help' for a list of commands.");
             }
         }
         fn show_sfetch(sys: &mut System) {
-            let os_name = "Xenon 1.1";
             let uptime = System::uptime();
             let cpuid = CpuId::new();
 
@@ -145,36 +114,31 @@ pub fn run_cli() -> Result<(), std::io::Error> {
             let total_ram = sys.total_memory() / u64::pow(1024, 2); // Convert to MB
         
             // Info header
-            println!("{}", style("Xenon System Info").bold().magenta());
+            println!("{}", ("Xenon System Info").bold().purple());
 
             // Info body
-            let ylbld = console::Style::new().bold().yellow();  // Yellow bold style
+            let name = [
+                "OS",
+                "Uptime",
+                "CPU Vendor",
+                "CPU Brand",
+                "RAM"
+            ];
+            let value = [
+                OS_NAME,
+                &(uptime.to_string() + " seconds"),
+                &vendor_info,
+                &cpu_brand,
+                &(total_ram.to_string() + " MB")
+            ];
 
-            println!("{}: {}",
-                format!("{: >11}",      // Pad "OS:" with spaces from the left to 11 characters
-                ylbld.apply_to("OS")),  // Apply style
-                os_name
-            );
-            println!("{}: {} seconds",
-                format!("{: >11}",
-                ylbld.apply_to("Uptime")),
-                uptime
-            );
-            println!("{}: {}",
-                format!("{: >11}",
-                ylbld.apply_to("CPU Vendor")),
-                vendor_info
-            );
-            println!("{}: {}",
-                format!("{: >11}",
-                ylbld.apply_to("CPU Brand")),
-                cpu_brand
-            );
-            println!("{}: {} MB",
-                format!("{: >11}",
-                ylbld.apply_to("RAM")),
-                total_ram
-            );
+            for i in 0..5 {
+                println!("{}: {}",
+                    format!("{: >11}",
+                        (name[i]).bold().yellow()), // Pad %name with spaces from the left to column 11
+                        value[i].to_string()        // Apply style to %value
+                );
+            }
         }
     }
 }
