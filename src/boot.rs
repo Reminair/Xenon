@@ -1,10 +1,17 @@
 use colored::*;
 use std::{thread, time};
 
+pub static OS_NAME: &str = "Xenon 1.1";
+
 pub fn boot() {
     // Ramsay Boot screen
-    println!("{}", "Welcome to xenonOS v1.1".purple().bold());
-    println!("{}", "Run 'help' to get started".purple().bold());
+    println!("{} {}",
+        "Welcome to".purple().bold(),
+        OS_NAME.purple().bold()
+    );
+    println!("{}",
+        "Run 'help' to get started".purple().bold()
+    );
 
     let duration = time::Duration::from_secs(3);
 
