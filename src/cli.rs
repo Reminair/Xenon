@@ -1,5 +1,3 @@
-use sysinfo::System;
-use raw_cpuid::CpuId;
 use std::{
     fs::File,
     path::Path,
@@ -22,8 +20,8 @@ use crossterm::{
     }
 };
 use colored::Colorize;
-use crate::boot::OS_NAME;
 use crate::socha;
+use crate::sfetch;
 
 pub fn clear() {
     let mut stdout = stdout();
@@ -39,12 +37,10 @@ where P: AsRef<Path>, {
     Ok(io::BufReader::new(file).lines())
 }
 
-pub fn run_cli() {
-    let mut sys = System::new();
-    sys.refresh_all();
-
+pub fn run() {
     loop {
-        print!("{}{}", "Xenon".bold().purple(), ">");   // Display a prompt for the user
+        // Display a prompt for the user
+        print!("{}{}", "Xenon".bold().purple(), ">");
         io::stdout().flush().unwrap();
 
         // Read the user's input
@@ -54,8 +50,8 @@ pub fn run_cli() {
         // Remove the newline character from the input
         let input = input.trim();
 
+        // Parse arguments
         let mut input_pieces = input.split_whitespace();
-
         let command = input_pieces.next().unwrap_or("");
 
         // Execute the command
@@ -68,10 +64,6 @@ pub fn run_cli() {
                     }
                 }
             }
-            "shutdwn" => {
-                println!("Goodbye!...");
-                std::process::exit(0);
-            }
             "clr" => {
                 clear();
             }
@@ -82,8 +74,7 @@ pub fn run_cli() {
                 io::stdout().flush().unwrap();
             }
             "sfetch" => {
-                sys.refresh_cpu(); // Ensure CPU info is updated before displaying
-                show_sfetch(&mut sys);
+                sfetch::run();
             }
             "socha" => {
                 let _ = socha::run();
@@ -96,48 +87,12 @@ pub fn run_cli() {
                     }
                 }
             }
+            "shutdwn" => {
+                println!("Goodbye!...");
+                std::process::exit(0);
+            }
             _ => {
                 println!("Command not recognized. Type 'help' for a list of commands.");
-            }
-        }
-        fn show_sfetch(sys: &mut System) {
-            let uptime = System::uptime();
-            let cpuid = CpuId::new();
-
-            // Get the vendor string (e.g., "GenuineIntel" or "AuthenticAMD")
-            let vendor_info = cpuid.get_vendor_info().map_or("Unknown Vendor".to_string(), |v| v.as_str().to_string());
-
-            // Get the CPU brand (e.g., "Intel Core i7")
-            let cpu_brand = cpuid.get_processor_brand_string()
-                .map_or("Unknown CPU".to_string(), |brand| brand.as_str().to_string());
-
-            let total_ram = sys.total_memory() / u64::pow(1024, 2); // Convert to MB
-        
-            // Info header
-            println!("{}", ("Xenon System Info").bold().purple());
-
-            // Info body
-            let name = [
-                "OS",
-                "Uptime",
-                "CPU Vendor",
-                "CPU Brand",
-                "RAM"
-            ];
-            let value = [
-                OS_NAME,
-                &(uptime.to_string() + " seconds"),
-                &vendor_info,
-                &cpu_brand,
-                &(total_ram.to_string() + " MB")
-            ];
-
-            for i in 0..5 {
-                println!("{}: {}",
-                    format!("{: >11}",
-                        (name[i]).bold().yellow()), // Pad %name with spaces from the left to column 11
-                        value[i].to_string()        // Apply style to %value
-                );
             }
         }
     }

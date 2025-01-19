@@ -1,9 +1,9 @@
 Available commands:
 
        help: Show this help message
-    shutdwn: Shutdown Xenon
         clr: Clear the screen
         say: Repeats a message exactly
      sfetch: Show Xenon system info
       socha: The Xenon file manager
     credits: Credits to the people who made Xenon Possible
+    shutdwn: Shutdown Xenon
