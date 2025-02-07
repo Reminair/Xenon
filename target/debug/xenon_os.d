@@ -1,1 +1,0 @@
-/home/flynn/Documents/Xenon/target/debug/xenon_os: /home/flynn/Documents/Xenon/src/cli.rs /home/flynn/Documents/Xenon/src/main.rs /home/flynn/Documents/Xenon/src/sfetch.rs /home/flynn/Documents/Xenon/src/socha.rs
