@@ -48,7 +48,7 @@ fn boot() {
 
     let start_time = std::time::Instant::now();
     while start_time.elapsed() < duration {
-            thread::sleep(time::Duration::from_millis(100));
+        thread::sleep(time::Duration::from_millis(100));
     }
 
     println!();
