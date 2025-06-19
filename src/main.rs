@@ -2,12 +2,11 @@ use std::{
     thread,
     time,
     fs::File,
-    path::Path,
     io::{
+        prelude::*,
         stdout,
         self,
-        Write,
-        BufRead
+        Write
     }
 };
 use crossterm::{
@@ -62,21 +61,12 @@ pub fn clear() {
     let _ = stdout.execute(Clear(ClearType::Purge));    // Clear history
 }
 
-// Parse file info
-fn get_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;       // Open file
-    Ok(io::BufReader::new(file).lines())    // Put file lines into a buffer?
-}
-
-// Output file info
-fn read_lines(file: &str) {
-    if let Ok(lines) = get_lines(file) {
-        // Consumes the iterator, returns an (Optional) String
-        for line in lines.map_while(Result::ok) {
-            println!("{}", line.bold().purple());
-        }
-    }
+fn read_lines(filename: &str) -> std::io::Result<()> {  // Output contents of file given
+    let mut file = File::open(filename)?;            // Set file to filename
+    let mut contents = String::new();                   // Touch contents as String
+    file.read_to_string(&mut contents)?;                // Read file to contents
+    println!("{}", contents.bold().purple());           // Print contents formatted
+    Ok(())
 }
 
 pub fn cli() {
@@ -99,7 +89,7 @@ pub fn cli() {
         // Execute the command
         match command {
             "help" => {
-                read_lines("help.txt");
+                let _ = read_lines("help.txt");
             }
             "clr" => {
                 clear();
@@ -117,7 +107,7 @@ pub fn cli() {
                 let _ = socha::run();
             }
             "credits" => {
-                read_lines("credits.txt");
+                let _ = read_lines("credits.txt");
             }
             "shutdwn" => {
                 println!("Goodbye!...");
